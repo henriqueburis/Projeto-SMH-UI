@@ -7,6 +7,8 @@ import TileWMS from 'ol/source/TileWMS';
 import Vector from 'ol/source/Vector';
 import GeoJSON from 'ol/format/GeoJSON';
 
+import { MapService } from 'src/app/map.service';
+
 @Component({
   selector: 'app-map',
   templateUrl: './map.component.html',
@@ -16,7 +18,7 @@ export class MapComponent implements OnInit {
 
   map;
   features = [];
-  constructor() { }
+  constructor(private mapService: MapService) { }
 
   ngOnInit() {
     this.initilizeMap();
@@ -121,8 +123,8 @@ export class MapComponent implements OnInit {
   initilizeJson() {
     // var url = "http://sjc.salvar.cemaden.gov.br/resources/dados/327_24.json";
 
-    // this.mapasService.listar()
-    //   .subscribe(resposta => this.features = <any> resposta)
+    this.mapService.listar()
+      .subscribe(resposta => this.features = <any> resposta)
 
     // console.log(this.features[0]);
 
