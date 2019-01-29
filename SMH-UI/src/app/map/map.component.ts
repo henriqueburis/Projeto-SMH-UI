@@ -1,0 +1,137 @@
+import { Component, OnInit } from '@angular/core';
+import Map from 'ol/Map';
+import TileLayer from 'ol/layer/Tile';
+import OSM from 'ol/source/OSM';
+import View from 'ol/View';
+import TileWMS from 'ol/source/TileWMS';
+import Vector from 'ol/source/Vector';
+import GeoJSON from 'ol/format/GeoJSON';
+
+@Component({
+  selector: 'app-map',
+  templateUrl: './map.component.html',
+  styleUrls: ['./map.component.css']
+})
+export class MapComponent implements OnInit {
+
+  map;
+  features = [];
+  constructor() { }
+
+  ngOnInit() {
+    this.initilizeMap();
+    this.initilizeJson();
+  }
+
+  initilizeMap() {
+
+
+    var torreEnergia = new TileLayer({
+      title: 'torreEnergia',
+      source: new TileWMS({
+        url: 'http://www.geoservicos.ibge.gov.br/geoserver/wms?',
+        params: {
+          'LAYERS': 'BC250_Edif_Energia_P',
+          'VERSION': '1.1.1',
+          'FORMAT': 'image/png',
+          'EPSG': '4326',
+          'TILED': true
+        },
+        projection: 'EPSG:4326',
+        serverType: 'geoserver'
+      })
+    });
+
+    var teste = new Vector({
+      title: 'added Layer',
+      source: new Vector({
+        url: 'http://www.geoservicos.ibge.gov.br/geoserver/CCAR/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=CCAR:BC100_Capital_P&maxFeatures=50&outputFormat=json',
+        format: new GeoJSON()
+      })
+    })
+
+    var pcd = new TileLayer({
+      source: new TileWMS({
+        url: 'http://localhost:8080/geoserver/wms?',
+        params: {
+          'LAYERS': 'terrama2_1:view1',
+          'VERSION': '1.1.1',
+          'FORMAT': 'image/png',
+          'EPSG': '4326',
+          'TILED': true,
+          'TIME': '2010-01-0'
+        },
+        projection: 'EPSG:4326',
+        serverType: 'geoserver'
+      })
+    });
+
+    var geoTeste = new TileLayer({
+      source: new TileWMS({
+        url: 'http://localhost:8080/geoserver/wms?',
+        params: {
+          'LAYERS': '	terrama2_4:view4',
+          'VERSION': '1.1.1',
+          'FORMAT': 'image/png',
+          'EPSG': '4326',
+          'TILED': true
+        },
+        projection: 'EPSG:4326',
+        serverType: 'geoserver'
+      })
+    });
+
+    console.log("teste");
+
+    var layers = [
+      new TileLayer({
+        source: new OSM()
+      }),
+      torreEnergia, pcd
+    ];
+
+    var map = new Map({
+      target: 'map',
+      layers: layers,
+      view: new View({
+        center: [-6124801.2015823, -1780692.0106836],
+        zoom: 5
+      })
+    });
+
+    map.on('singleclick', function (evt) {
+      var coordinate = evt.coordinate;
+      // console.log(coordinate[0]);
+
+      if (evt.dragging) {
+        return;
+      }
+      var pixel = map.getEventPixel(evt.originalEvent);
+      console.log(pixel)
+
+      // var hit = map.forEachLayerAtPixel(pixel, function() {
+      //   return true;
+      // });
+      var teste = map.getTargetElement().style.cursor = true ? 'pointer' : 'teste';
+      console.log(teste)
+
+    });
+  }
+
+  initilizeJson() {
+    // var url = "http://sjc.salvar.cemaden.gov.br/resources/dados/327_24.json";
+
+    // this.mapasService.listar()
+    //   .subscribe(resposta => this.features = <any> resposta)
+
+    // console.log(this.features[0]);
+
+    for (var i = 1; i <= 5; i++) {
+      console.log(i);
+
+    }
+
+
+  }
+
+}
