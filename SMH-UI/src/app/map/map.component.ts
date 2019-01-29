@@ -6,6 +6,7 @@ import View from 'ol/View';
 import TileWMS from 'ol/source/TileWMS';
 import Vector from 'ol/source/Vector';
 import GeoJSON from 'ol/format/GeoJSON';
+// import Control from 'ol/control/Control';
 
 import { MapService } from 'src/app/map.service';
 
@@ -16,8 +17,8 @@ import { MapService } from 'src/app/map.service';
 })
 export class MapComponent implements OnInit {
 
-  map;
-  features = [];
+  private map;
+  private features = [];
   constructor(private mapService: MapService) { }
 
   ngOnInit() {
@@ -26,7 +27,7 @@ export class MapComponent implements OnInit {
   }
 
   initilizeMap() {
-
+    
 
     var torreEnergia = new TileLayer({
       title: 'torreEnergia',
@@ -40,7 +41,9 @@ export class MapComponent implements OnInit {
           'TILED': true
         },
         projection: 'EPSG:4326',
-        serverType: 'geoserver'
+        serverType: 'geoserver',
+        visible: true,
+        name: 'layer_torreEnergia'
       })
     });
 
@@ -54,17 +57,19 @@ export class MapComponent implements OnInit {
 
     var pcd = new TileLayer({
       source: new TileWMS({
-        url: 'http://localhost:8080/geoserver/wms?',
+        url: 'http://www.terrama2.dpi.inpe.br/curso/geoserver/wms?',
         params: {
-          'LAYERS': 'terrama2_1:view1',
+          'LAYERS': 'terrama2_506:view506',
           'VERSION': '1.1.1',
           'FORMAT': 'image/png',
           'EPSG': '4326',
           'TILED': true,
-          'TIME': '2010-01-0'
+          'TIME': '2019-01-01'
         },
         projection: 'EPSG:4326',
-        serverType: 'geoserver'
+        serverType: 'geoserver',
+        visible: false,
+        name: 'layer_pcd'
       })
     });
 
@@ -79,43 +84,55 @@ export class MapComponent implements OnInit {
           'TILED': true
         },
         projection: 'EPSG:4326',
-        serverType: 'geoserver'
+        serverType: 'geoserver',
+        visible: false,
+        name: 'layer_geoTeste'
       })
     });
 
-    console.log("teste");
+    var osm = new TileLayer({
+      preload: Infinity,
+      source: new OSM(),
+      name: 'osm'
+    })
 
-    var layers = [
-      new TileLayer({
-        source: new OSM()
-      }),
-      torreEnergia, pcd
-    ];
+    var view = new View({
+      center: [-6124801.2015823, -1780692.0106836],
+      zoom: 5
+    })
 
     var map = new Map({
       target: 'map',
-      layers: layers,
-      view: new View({
-        center: [-6124801.2015823, -1780692.0106836],
-        zoom: 5
-      })
+      layers: [osm],
+      view: view
     });
+
+    map.addLayer(torreEnergia);
+    map.addLayer(pcd);
+    
+
+    // var myControl = new Control({element: torreEnergia});
+
 
     map.on('singleclick', function (evt) {
       var coordinate = evt.coordinate;
-      // console.log(coordinate[0]);
-
-      if (evt.dragging) {
-        return;
-      }
-      var pixel = map.getEventPixel(evt.originalEvent);
-      console.log(pixel)
+      console.log(coordinate[0]);
+      // map.addLayer(pcd)
+      // if (evt.dragging) {
+      //   return;
+      // }
+      // var pixel = map.getEventPixel(evt.originalEvent);
+      // console.log(pixel)
 
       // var hit = map.forEachLayerAtPixel(pixel, function() {
       //   return true;
       // });
-      var teste = map.getTargetElement().style.cursor = true ? 'pointer' : 'teste';
-      console.log(teste)
+      // var teste = map.getTargetElement().style.cursor = true ? 'pointer' : 'teste';
+      // console.log(teste)
+
+      // var source = TileWMS.getSouce();
+      // var params = source.getParams();
+
 
     });
   }
@@ -123,8 +140,8 @@ export class MapComponent implements OnInit {
   initilizeJson() {
     // var url = "http://sjc.salvar.cemaden.gov.br/resources/dados/327_24.json";
 
-    this.mapService.listar()
-      .subscribe(resposta => this.features = <any> resposta)
+    // this.mapService.listar()
+    //   .subscribe(resposta => this.features = <any>resposta)
 
     // console.log(this.features[0]);
 
