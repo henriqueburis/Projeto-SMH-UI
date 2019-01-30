@@ -6,9 +6,12 @@ import View from 'ol/View';
 import TileWMS from 'ol/source/TileWMS';
 import Vector from 'ol/source/Vector';
 import GeoJSON from 'ol/format/GeoJSON';
-// import Control from 'ol/control/Control';
+
+import Point from 'ol/geom/Point';
+import Feature from 'ol/Feature';
 
 import { MapService } from 'src/app/map.service';
+import { mapToMapExpression } from '@angular/compiler/src/render3/util';
 
 @Component({
   selector: 'app-map',
@@ -18,7 +21,8 @@ import { MapService } from 'src/app/map.service';
 export class MapComponent implements OnInit {
 
   private map;
-  private features = [];
+  private torreEnergia;
+  private busca;
   constructor(private mapService: MapService) { }
 
   ngOnInit() {
@@ -27,7 +31,7 @@ export class MapComponent implements OnInit {
   }
 
   initilizeMap() {
-    
+
 
     var torreEnergia = new TileLayer({
       title: 'torreEnergia',
@@ -53,7 +57,7 @@ export class MapComponent implements OnInit {
         url: 'http://www.geoservicos.ibge.gov.br/geoserver/CCAR/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=CCAR:BC100_Capital_P&maxFeatures=50&outputFormat=json',
         format: new GeoJSON()
       })
-    })
+    });
 
     var pcd = new TileLayer({
       source: new TileWMS({
@@ -107,16 +111,23 @@ export class MapComponent implements OnInit {
       view: view
     });
 
-    map.addLayer(torreEnergia);
-    map.addLayer(pcd);
-    
 
-    // var myControl = new Control({element: torreEnergia});
+
+    // map.addLayer(torreEnergia);
+    // map.addLayer(pcd);
+    // map.addLayer(vector);
 
 
     map.on('singleclick', function (evt) {
       var coordinate = evt.coordinate;
       console.log(coordinate[0]);
+
+      var feature = new Feature(
+        new Point(evt.coordinate)
+      );
+      // feature.setStyle(iconStyle);
+      // vectorSource.addFeature(feature);
+
       // map.addLayer(pcd)
       // if (evt.dragging) {
       //   return;
@@ -135,6 +146,10 @@ export class MapComponent implements OnInit {
 
 
     });
+
+
+
+
   }
 
   initilizeJson() {
@@ -149,8 +164,15 @@ export class MapComponent implements OnInit {
       console.log(i);
 
     }
+  }
 
-
+  
+  private salvar() {
+    if (this.busca == null) {
+      console.log("nulo");
+    } else {
+      console.log(this.busca);
+    }
   }
 
 }
