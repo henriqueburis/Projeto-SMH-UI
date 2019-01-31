@@ -7,8 +7,20 @@ import TileWMS from 'ol/source/TileWMS';
 import Vector from 'ol/source/Vector';
 import GeoJSON from 'ol/format/GeoJSON';
 
-import Point from 'ol/geom/Point';
-import Feature from 'ol/Feature';
+import FullScreen from 'ol/control/FullScreen';
+import DragRotateAndZoom from 'ol/interaction/DragRotateAndZoom';
+
+import Select from 'ol/interaction/Select';
+import { Icon, Style, Stroke } from 'ol/style';
+import LayerSwitcher from 'ol-ext/control/LayerSwitcher';
+
+// import VectorSource from 'ol/source';
+// import Overlay from 'ol/Overlay';
+// import xx from '';
+// import Point from 'ol/geom/Point';
+// import Feature from 'ol/Feature';
+// import VectorLayer from 'ol/layer';
+
 
 import { MapService } from 'src/app/map.service';
 import { mapToMapExpression } from '@angular/compiler/src/render3/util';
@@ -23,6 +35,7 @@ export class MapComponent implements OnInit {
   private map;
   private torreEnergia;
   private busca;
+  private features = [];
   constructor(private mapService: MapService) { }
 
   ngOnInit() {
@@ -51,15 +64,8 @@ export class MapComponent implements OnInit {
       })
     });
 
-    var teste = new Vector({
-      title: 'added Layer',
-      source: new Vector({
-        url: 'http://www.geoservicos.ibge.gov.br/geoserver/CCAR/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=CCAR:BC100_Capital_P&maxFeatures=50&outputFormat=json',
-        format: new GeoJSON()
-      })
-    });
 
-    var pcd = new TileLayer({
+    var prec4km = new TileLayer({
       source: new TileWMS({
         url: 'http://www.terrama2.dpi.inpe.br/curso/geoserver/wms?',
         params: {
@@ -77,11 +83,11 @@ export class MapComponent implements OnInit {
       })
     });
 
-    var geoTeste = new TileLayer({
+    var pcd = new TileLayer({
       source: new TileWMS({
         url: 'http://localhost:8080/geoserver/wms?',
         params: {
-          'LAYERS': '	terrama2_4:view4',
+          'LAYERS': 'terrama2_1:view1',
           'VERSION': '1.1.1',
           'FORMAT': 'image/png',
           'EPSG': '4326',
@@ -90,9 +96,32 @@ export class MapComponent implements OnInit {
         projection: 'EPSG:4326',
         serverType: 'geoserver',
         visible: false,
-        name: 'layer_geoTeste'
+        name: 'layer_pcd'
       })
     });
+
+
+    var teste = new Vector({
+      title: 'added Layer',
+      source: new Vector({
+        url: 'http://www.geoservicos.ibge.gov.br/geoserver/CCAR/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=CCAR:BC100_Capital_P&maxFeatures=50&outputFormat=json',
+        format: new GeoJSON()
+      })
+    });
+  
+    // Configurações do Mapas
+    // create an interaction to add to the map that isn't there by default
+    var interaction = new DragRotateAndZoom();
+
+    // var overlay = new Overlay({
+    //   position: center,
+    //   element: document.getElementById('overlay')
+    // });
+     var ControlLayerSwitcher = new  LayerSwitcher();
+    //  map.addControl(new LayerSwitcher());
+
+    // create a control to add to the map that isn't there by default
+    var control = new FullScreen();
 
     var osm = new TileLayer({
       preload: Infinity,
@@ -100,31 +129,46 @@ export class MapComponent implements OnInit {
       name: 'osm'
     })
 
+    var center = [-6124801.2015823, -1780692.0106836];
     var view = new View({
-      center: [-6124801.2015823, -1780692.0106836],
-      zoom: 5
+      center: center,
+      zoom: 4
     })
 
     var map = new Map({
       target: 'map',
       layers: [osm],
+      // interactions: [interaction],
+      controls: [control],
+      // overlays: [overlay],
       view: view
     });
 
 
 
     // map.addLayer(torreEnergia);
-    // map.addLayer(pcd);
-    // map.addLayer(vector);
+    // map.addLayer(prec4km);
+    map.addLayer(pcd);
 
 
     map.on('singleclick', function (evt) {
       var coordinate = evt.coordinate;
-      console.log(coordinate[0]);
+      var pixel = map.getPixelFromCoordinate(coordinate);
+      // var el = document.getElementById('name');
 
-      var feature = new Feature(
-        new Point(evt.coordinate)
-      );
+      // el.innerHTML = '';
+      // map.forEachFeatureAtPixel(pixel, function (feature) {
+      //   el.innerHTML += feature.get('name') + '<br>';
+      // });
+
+      console.log(pixel);
+
+
+      // var feature = new Feature(
+      //   new Point(evt.coordinate)
+      // );
+
+      // console.log(feature);
       // feature.setStyle(iconStyle);
       // vectorSource.addFeature(feature);
 
@@ -146,12 +190,9 @@ export class MapComponent implements OnInit {
 
 
     });
-
-
-
-
   }
 
+  // Método json pcd
   initilizeJson() {
     // var url = "http://sjc.salvar.cemaden.gov.br/resources/dados/327_24.json";
 
@@ -166,7 +207,7 @@ export class MapComponent implements OnInit {
     }
   }
 
-  
+  // Botão salvar
   private salvar() {
     if (this.busca == null) {
       console.log("nulo");
