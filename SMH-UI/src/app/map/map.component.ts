@@ -5,6 +5,7 @@ import OSM from 'ol/source/OSM';
 import View from 'ol/View';
 import TileWMS from 'ol/source/TileWMS';
 import Vector from 'ol/source/Vector';
+import Stamen from 'ol/source/Stamen';
 import GeoJSON from 'ol/format/GeoJSON';
 
 import FullScreen from 'ol/control/FullScreen';
@@ -12,7 +13,8 @@ import DragRotateAndZoom from 'ol/interaction/DragRotateAndZoom';
 
 import Select from 'ol/interaction/Select';
 import { Icon, Style, Stroke } from 'ol/style';
-import LayerSwitcher from 'ol-ext/control/LayerSwitcher';
+// import LayerSwitcher from 'ol/control/LayerSwitcher';
+
 
 // import VectorSource from 'ol/source';
 // import Overlay from 'ol/Overlay';
@@ -33,7 +35,6 @@ import { mapToMapExpression } from '@angular/compiler/src/render3/util';
 export class MapComponent implements OnInit {
 
   private map;
-  private torreEnergia;
   private busca;
   private features = [];
   constructor(private mapService: MapService) { }
@@ -100,7 +101,24 @@ export class MapComponent implements OnInit {
       })
     });
 
+    var estado = new TileLayer({
+      source: new TileWMS({
+        url: 'http://200.133.244.148:8080/geoserver/cemaden_dev/wms',
+        params: {
+          'LAYERS': 'cemaden_dev:br_estados',
+          'VERSION': '1.1.1',
+          'FORMAT': 'image/png',
+          'EPSG': '4326',
+          'TILED': true
+        },
+        projection: 'EPSG:4326',
+        serverType: 'geoserver',
+        visible: false,
+        name: 'layer_estado'
+      })
+    });
 
+    //-------------------grup test---------------------------//
     var teste = new Vector({
       title: 'added Layer',
       source: new Vector({
@@ -108,7 +126,29 @@ export class MapComponent implements OnInit {
         format: new GeoJSON()
       })
     });
-  
+
+    var vectorSource = new Vector(
+      {
+        url: 'http://www.geoservicos.ibge.gov.br/geoserver/CCAR/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=CCAR:BC100_Capital_P&maxFeatures=50&outputFormat=json',
+        projection: 'EPSG:3857',
+        format: new GeoJSON(),
+        attributions: ["&copy; <a href='https://data.culture.gouv.fr/explore/dataset/fonds-de-la-guerre-14-18-extrait-de-la-base-memoire'>data.culture.gouv.fr</a>"],
+        logo: "https://www.data.gouv.fr/s/avatars/37/e56718abd4465985ddde68b33be1ef.jpg"
+      });
+
+
+    var vector = new Vector(
+      {
+        name: '1914-18',
+        preview: "http://www.culture.gouv.fr/Wave/image/memoire/2445/sap40_z0004141_v.jpg",
+        source: vectorSource
+      });
+
+ 
+    
+
+    //---------------------final test ----------------------------//     
+
     // Configurações do Mapas
     // create an interaction to add to the map that isn't there by default
     var interaction = new DragRotateAndZoom();
@@ -117,7 +157,7 @@ export class MapComponent implements OnInit {
     //   position: center,
     //   element: document.getElementById('overlay')
     // });
-     var ControlLayerSwitcher = new  LayerSwitcher();
+    // var ControlLayerSwitcher = new LayerSwitcher();
     //  map.addControl(new LayerSwitcher());
 
     // create a control to add to the map that isn't there by default
@@ -127,17 +167,37 @@ export class MapComponent implements OnInit {
       preload: Infinity,
       source: new OSM(),
       name: 'osm'
-    })
+    });
+
+    var Watercolor = new TileLayer(
+      {	title: "Watercolor",
+        baseLayer: true,
+        source: new Stamen({
+          layer: 'watercolor'
+        })
+      });
+
+
+    var Toner = new TileLayer(
+      {
+        title: "Toner",
+        baseLayer: true,
+        visible: true,
+        source: new Stamen({
+          layer: 'toner'
+        })
+      });
+
 
     var center = [-6124801.2015823, -1780692.0106836];
     var view = new View({
       center: center,
       zoom: 4
-    })
+    });
 
     var map = new Map({
       target: 'map',
-      layers: [osm],
+      layers: [Watercolor],
       // interactions: [interaction],
       controls: [control],
       // overlays: [overlay],
@@ -149,7 +209,7 @@ export class MapComponent implements OnInit {
     // map.addLayer(torreEnergia);
     // map.addLayer(prec4km);
     map.addLayer(pcd);
-
+    map.addLayer(estado);
 
     map.on('singleclick', function (evt) {
       var coordinate = evt.coordinate;

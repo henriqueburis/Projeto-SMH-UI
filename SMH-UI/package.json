@@ -1,6 +1,6 @@
 {
   "name": "smh-ui",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -22,6 +22,7 @@
     "core-js": "^2.5.4",
     "ol": "^5.3.0",
     "ol-ext": "^3.1.0",
+    "ol-layerswitcher": "^3.2.0",
     "primeflex": "^1.0.0-rc.1",
     "primeicons": "^1.0.0",
     "primeng": "^7.0.5",
