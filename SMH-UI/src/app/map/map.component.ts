@@ -13,7 +13,7 @@ import DragRotateAndZoom from 'ol/interaction/DragRotateAndZoom';
 
 import Select from 'ol/interaction/Select';
 import { Icon, Style, Stroke } from 'ol/style';
-// import LayerSwitcher from 'ol/control/LayerSwitcher';
+import control from 'ol/control';
 
 
 // import VectorSource from 'ol/source';
@@ -47,21 +47,23 @@ export class MapComponent implements OnInit {
   initilizeMap() {
 
 
-    var torreEnergia = new TileLayer({
+    var baciashidrografica = new TileLayer({
       title: 'torreEnergia',
       source: new TileWMS({
         url: 'http://www.geoservicos.ibge.gov.br/geoserver/wms?',
         params: {
-          'LAYERS': 'BC250_Edif_Energia_P',
+          'LAYERS': 'CGEO:ANMS2010_06_baciashidrograficas',
           'VERSION': '1.1.1',
           'FORMAT': 'image/png',
           'EPSG': '4326',
           'TILED': true
         },
+        preload: Infinity,
+        opacity: 1,
         projection: 'EPSG:4326',
         serverType: 'geoserver',
         visible: true,
-        name: 'layer_torreEnergia'
+        name: 'layer_baciashidrografica'
       })
     });
 
@@ -77,6 +79,8 @@ export class MapComponent implements OnInit {
           'TILED': true,
           'TIME': '2019-01-01'
         },
+        preload: Infinity,
+        opacity: 20,
         projection: 'EPSG:4326',
         serverType: 'geoserver',
         visible: false,
@@ -144,8 +148,6 @@ export class MapComponent implements OnInit {
         source: vectorSource
       });
 
- 
-    
 
     //---------------------final test ----------------------------//     
 
@@ -170,7 +172,9 @@ export class MapComponent implements OnInit {
     });
 
     var Watercolor = new TileLayer(
-      {	title: "Watercolor",
+      {
+        preload: Infinity,
+        title: "Watercolor",
         baseLayer: true,
         source: new Stamen({
           layer: 'watercolor'
@@ -180,6 +184,7 @@ export class MapComponent implements OnInit {
 
     var Toner = new TileLayer(
       {
+        preload: Infinity,
         title: "Toner",
         baseLayer: true,
         visible: true,
@@ -204,24 +209,27 @@ export class MapComponent implements OnInit {
       view: view
     });
 
+    // map.addControl (new control.LayerSwitcherImage());
 
 
-    // map.addLayer(torreEnergia);
-    // map.addLayer(prec4km);
+    map.addLayer(baciashidrografica);
+    map.addLayer(prec4km);
     map.addLayer(pcd);
     map.addLayer(estado);
 
     map.on('singleclick', function (evt) {
       var coordinate = evt.coordinate;
       var pixel = map.getPixelFromCoordinate(coordinate);
+      var WIDTH = map.getSize().x;
       // var el = document.getElementById('name');
 
       // el.innerHTML = '';
       // map.forEachFeatureAtPixel(pixel, function (feature) {
       //   el.innerHTML += feature.get('name') + '<br>';
       // });
-
-      console.log(pixel);
+      console.log(WIDTH);
+      // console.log(coordinate);
+      map.removeLayer(prec4km);
 
 
       // var feature = new Feature(
@@ -250,6 +258,7 @@ export class MapComponent implements OnInit {
 
 
     });
+
   }
 
   // Método json pcd
@@ -261,7 +270,7 @@ export class MapComponent implements OnInit {
 
     // console.log(this.features[0]);
 
-    for (var i = 1; i <= 5; i++) {
+    for (var i = 1; i <= 2; i++) {
       console.log(i);
 
     }
