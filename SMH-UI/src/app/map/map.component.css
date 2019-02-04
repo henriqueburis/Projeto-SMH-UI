@@ -33,4 +33,22 @@ border:  1px solid #555;
 
   }
 
+  #menu{
+    position: absolute;
+    top: 50px;
+    right: 10px;
+    list-style-type: none;
+    border-radius: 4px;
+    border: 3px solid #333;
+    padding: 0;
+    background-color: #eee;
+}
+#menu li{
+    padding: 5px;
+}
+#menu li:hover{
+    cursor: pointer;
+    text-decoration: underline;
+}
+
   

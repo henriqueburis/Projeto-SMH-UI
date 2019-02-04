@@ -5,3 +5,61 @@
 </div>
 <div id="map" class="map"></div>
 {{busca}}
+
+
+<!-- <div  class="ui-g" (click)="setMapType()" style="width:250px;margin-bottom:10px">
+    <div class="ui-g-12">
+        <p-radioButton name="Watercolor" value="osm" label="OSM" [(ngModel)]="val2" inputId="preopt1"></p-radioButton>
+    </div>
+    <div class="ui-g-12">
+        <p-radioButton name="Watercolor" value="Watercolor" label="Watercolor" [(ngModel)]="val2" inputId="preopt2"></p-radioButton>
+    </div>
+    <div class="ui-g-12">
+        <p-radioButton name="Watercolor" value="Toner" label="Toner" [(ngModel)]="val2" inputId="preopt3"></p-radioButton>
+    </div>
+</div> -->
+Selected Value = {{val2||'none'}}
+
+<div id="menu" (click)="setLayerType()" class="ui-g" style="width:250px;margin-bottom:10px">
+    <div class="ui-g-12"><p-checkbox name="group2" value="baciashidrografica" label="baciashidrografica" [(ngModel)]="selectedCategories" inputId="baciashidrografica"></p-checkbox></div>
+    <div class="ui-g-12"><p-checkbox name="group2" value="prec4km" label="prec4km" [(ngModel)]="selectedCategories" inputId="prec4km"></p-checkbox></div>
+    <div class="ui-g-12"><p-checkbox name="group2" value="pcd" label="PCDs" [(ngModel)]="selectedCategories" inputId="PCDs"></p-checkbox></div>
+    <div class="ui-g-12"><p-checkbox name="group2" value="estado" label="Estados" [(ngModel)]="selectedCategories" inputId="Estados"></p-checkbox></div>
+</div>
+<button type="submit" (click)="activeLayer()">active</button>
+
+<!-- <ul id="menu" onchange="testedd()">
+    <li data-type="OSM">OSM</li>
+    <li data-type="mapQuestOSM">Mapquest</li>
+    <li data-type="mapQuestSAT">Mapquest Sat</li>
+</ul> -->
+
+<!-- <select (onchange)="changeMap()">
+    <option value="BingSat">Bing Sat</option>
+    <option value="BingRoad">Bing Road</option>
+    <option value="OSM">OSM</option>
+    <option value="MapquestSat">Mapquest Sat</option>
+    <option value="MapQuestRoad">MapQuest Road</option>
+</select>  -->
+
+<!-- <div class="panel panel-default">
+    <div class="panel-heading">
+        <h4 class="panel-title">
+        <a data-toggle="collapse" href="#basemap-choice">
+            <i class="fa fa-list-alt"></i>
+            Basemaps
+        </a>
+
+        </h4>
+    </div>
+    <div id="basemap-choice" class="panel-collapse collapse in">
+        <div class="panel-body" id="basemaps">
+
+        </div>
+        <div id="baseopacity">
+            <label>Opacity</label>
+            <input id="baseopslider" type="text" data-slider-min="0" data-slider-max="100" data-slider-step="1" data-slider-value="100"/>
+
+        </div>                
+    </div>
+</div> -->
