@@ -10,7 +10,6 @@ export class MapService {
 
   constructor(private httpClient: HttpClient) { }
 
-
   listar() {
     return this.httpClient.get(this.url);
   }

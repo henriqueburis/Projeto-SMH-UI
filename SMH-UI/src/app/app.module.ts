@@ -13,6 +13,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 // Imports PrimeFaceNg Components
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { CheckboxModule } from 'primeng/checkbox';
+import {ProgressBarModule} from 'primeng/progressbar';
 
 @NgModule({
   declarations: [
@@ -25,7 +26,8 @@ import { CheckboxModule } from 'primeng/checkbox';
     FormsModule,
     BrowserAnimationsModule,
     RadioButtonModule,
-    CheckboxModule
+    CheckboxModule,
+    ProgressBarModule
   ],
   providers: [],
   bootstrap: [AppComponent]

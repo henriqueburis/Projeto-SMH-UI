@@ -39,12 +39,20 @@ export class MapComponent implements OnInit {
   private estado;
   private baciashidrografica;
   private busca;
-  private Watercolor;
-  private Toner;
+  private waterColor;
+  private toner;
   private osm;
+  private terrain;
+  value: number = 0;
+  testep: boolean = false;
   private features = [];
-  val2: string = 'Watercolor';
-  selectedCategories: string[] = ['pcd', 'estado'];
+  setMap: string = 'Watercolor';
+  // selectedCategories: string[] = ['pcd', 'estado'];
+  private geoserverIBGE = 'http://www.geoservicos.ibge.gov.br/geoserver/wms?';
+  private geoserverTerraMaCurso = 'http://www.terrama2.dpi.inpe.br/curso/geoserver/wms?';
+  private geoserverTerraMaLocal = 'http://localhost:8080/geoserver/wms?';
+  private geoserverCemaden = 'http://200.133.244.148:8080/geoserver/cemaden_dev/wms';
+
   constructor(private mapService: MapService) { }
 
   ngOnInit() {
@@ -54,11 +62,25 @@ export class MapComponent implements OnInit {
 
   initilizeMap() {
 
+    let interval = setInterval(() => {
+      this.value = this.value + Math.floor(Math.random() * 50) + 20;
+      if (this.value >= 100) {
+        this.value = 100;
+        this.map.addLayer(this.baciashidrografica);
+        // this.testep = true;
+        // this.messageService.add({severity: 'info', summary: 'Success', detail: 'Process Completed'});
+        clearInterval(interval);
+      } else if (this.value >= 50) {
+        this.map.addLayer(this.prec4km);
+
+      }
+    }, 2000);
+
 
     this.baciashidrografica = new TileLayer({
       title: 'baciashidrografica',
       source: new TileWMS({
-        url: 'http://www.geoservicos.ibge.gov.br/geoserver/wms?',
+        url: this.geoserverIBGE,
         params: {
           'LAYERS': 'CGEO:ANMS2010_06_baciashidrograficas',
           'VERSION': '1.1.1',
@@ -67,7 +89,7 @@ export class MapComponent implements OnInit {
           'TILED': true
         },
         preload: Infinity,
-        opacity: 1,
+        // opacity: 1,
         projection: 'EPSG:4326',
         serverType: 'geoserver',
         name: 'layer_baciashidrografica'
@@ -78,26 +100,26 @@ export class MapComponent implements OnInit {
     this.prec4km = new TileLayer({
       title: 'prec4km',
       source: new TileWMS({
-        url: 'http://www.terrama2.dpi.inpe.br/curso/geoserver/wms?',
+        url: this.geoserverTerraMaCurso,
         params: {
           'LAYERS': 'terrama2_506:view506',
           'VERSION': '1.1.1',
           'FORMAT': 'image/png',
           'EPSG': '4326',
           'TILED': true,
-          'TIME': '2019-01-01'
+          'TIME': '2019-01-02'
         },
         preload: Infinity,
         projection: 'EPSG:4326',
         serverType: 'geoserver',
-        name: 'layer_pcd'
+        name: 'layer_prec4km'
       })
     });
 
     this.pcd = new TileLayer({
       title: 'pcd',
       source: new TileWMS({
-        url: 'http://localhost:8080/geoserver/wms?',
+        url: this.geoserverTerraMaLocal,
         params: {
           'LAYERS': 'terrama2_1:view1',
           'VERSION': '1.1.1',
@@ -115,7 +137,7 @@ export class MapComponent implements OnInit {
     this.estado = new TileLayer({
       title: 'estados',
       source: new TileWMS({
-        url: 'http://200.133.244.148:8080/geoserver/cemaden_dev/wms',
+        url: this.geoserverCemaden,
         params: {
           'LAYERS': 'cemaden_dev:br_estados',
           'VERSION': '1.1.1',
@@ -186,29 +208,23 @@ export class MapComponent implements OnInit {
 
     //---------------------final test ----------------------------//     
 
-    // Configurações do Mapas
-    // create an interaction to add to the map that isn't there by default
     var interaction = new DragRotateAndZoom();
 
-    // var overlay = new Overlay({
-    //   position: center,
-    //   element: document.getElementById('overlay')
-    // });
-    // var ControlLayerSwitcher = new LayerSwitcher();
-    //  map.addControl(new LayerSwitcher());
-
-    // create a control to add to the map that isn't there by default
     var control = new FullScreen();
 
     this.osm = new TileLayer({
       preload: Infinity,
+      visible: false,
+      title: "osm",
+      baseLayer: true,
       source: new OSM(),
-      name: 'osm'
+      layer: 'osm'
     });
 
-    this.Watercolor = new TileLayer(
+    this.waterColor = new TileLayer(
       {
         preload: Infinity,
+        visible: true,
         title: "Watercolor",
         baseLayer: true,
         source: new Stamen({
@@ -217,17 +233,28 @@ export class MapComponent implements OnInit {
       });
 
 
-    this.Toner = new TileLayer(
+    this.toner = new TileLayer(
       {
         preload: Infinity,
         title: "Toner",
         baseLayer: true,
-        visible: true,
+        visible: false,
         source: new Stamen({
           layer: 'toner'
         })
       });
 
+
+    this.terrain = new TileLayer(
+      {
+        preload: Infinity,
+        title: "terrain",
+        baseLayer: true,
+        visible: false,
+        source: new Stamen({
+          layer: 'terrain'
+        })
+      });
 
     var center = [-6124801.2015823, -1780692.0106836];
     var view = new View({
@@ -237,34 +264,11 @@ export class MapComponent implements OnInit {
 
     this.map = new Map({
       target: 'map',
-      layers: [this.Watercolor],
+      layers: [this.waterColor, this.osm, this.toner, this.terrain],
       // interactions: [interaction],
       controls: [control],
-      // overlays: [overlay],
       view: view
     });
-
-
-    // var insertLayer = function (layer) {
-    //   var layers = map.getLayers();
-    //   console.log(layers);
-    // };
-    // var switchLayer = function (evt) {
-    //   var attr = this.getAttribute('data-type');
-    //   console.log(attr);
-    //   switch (attr) {
-    //     case 'OSM':
-    //       insertLayer(osm);
-    //       break;
-    //     case 'mapQuestOSM':
-    //       insertLayer(Watercolor);
-    //       map.removeLayer(osm);
-    //       break;
-    //     case 'mapQuestSAT':
-    //       insertLayer(Toner);
-    //       break;
-    //   }
-    // };
 
     // var lis = document.getElementById('menu') as HTMLElement;
     // console.log(lis);
@@ -274,26 +278,24 @@ export class MapComponent implements OnInit {
     //   li.addEventListener('click', switchLayer, false);
     // });
 
-    // this.map.addLayer(this.baciashidrografica);
-    this.map.addLayer(this.prec4km);
-    this.map.addLayer(this.pcd);
+    
+    this.baciashidrografica.setOpacity(0.52);
+
+    this.prec4km.setOpacity(0.52);
     this.map.addLayer(this.estado);
-    // map.addLayer(teste);
+    this.map.addLayer(this.pcd);
 
-
-    // maps on singleclick
     this.map.on('singleclick', function (evt) {
-      var coordinate = evt.coordinate;
-      console.log(coordinate);
+      // var coordinate = evt.coordinate;
+      // console.log(coordinate);
       // var pixel = map.getPixelFromCoordinate(coordinate);
-      // var WIDTH = map.getSize().x;
       // var el = document.getElementById('name');
+      console.log(evt.pixel);
     });
 
     function changeMap() {
       console.log('name');
     }
-
     // function setMapType(newType) {
     //   console.log('teste');
     //   if (newType == 'OSM') {
@@ -307,45 +309,37 @@ export class MapComponent implements OnInit {
 
   // Método json pcd
   initilizeJson() {
-    // var url = "http://sjc.salvar.cemaden.gov.br/resources/dados/327_24.json";
 
     // this.mapService.listar()
-    //   .subscribe(resposta => this.features = <any>resposta)
+    // .subscribe(resposta => this.features = <any>resposta)
 
     // console.log(this.features[0]);
 
-    for (var i = 1; i <= 2; i++) {
+    // for (var i = 1; i <= 2; i++) {
 
-      console.log(i);
-
-    }
-  }
-
-  private setLayerType() {
-    console.log(this.selectedCategories);
-
-    // if (this.val2 == 'osm') {
-
-    // } else if (this.val2 == 'Watercolor') {
-
-    // } else if (this.val2 == 'Toner') {
+    //   console.log(i);
 
     // }
   }
 
+  private setLayerType() {
+    // console.log(this.selectedCategories);
+  }
+
   private setMapType() {
-    if (this.val2 == 'osm') {
-      // this.map.addLayer(this.osm);
-      this.map.removeLayer(this.Watercolor);
-      // this.map.removeLayer(this.Toner);
-    } else if (this.val2 == 'Watercolor') {
-      this.map.addLayer(this.Watercolor);
-      this.map.removeLayer(this.osm);
-      this.map.removeLayer(this.Toner);
-    } else if (this.val2 == 'Toner') {
-      this.map.addLayer(this.Toner);
-      this.map.removeLayer(this.Watercolor);
-      this.map.removeLayer(this.osm);
+    switch (this.setMap) {
+      case 'osm':
+        this.osm.setVisible(true); this.waterColor.setVisible(false); this.toner.setVisible(false); this.terrain.setVisible(false);
+        break;
+      case 'Watercolor':
+        this.osm.setVisible(false); this.waterColor.setVisible(true); this.toner.setVisible(false); this.terrain.setVisible(false);
+        break;
+      case 'Toner':
+        this.osm.setVisible(false); this.waterColor.setVisible(false); this.toner.setVisible(true); this.terrain.setVisible(false);
+        break;
+      case 'Terrain':
+        this.osm.setVisible(false); this.waterColor.setVisible(false); this.toner.setVisible(false); this.terrain.setVisible(true);
+        break;
     }
   }
 
@@ -353,36 +347,56 @@ export class MapComponent implements OnInit {
   private salvar() {
 
     // this.prec4km.setOpacity(0.52);
-    this.prec4km.setVisible(false);
+    // this.prec4km.setVisible(false);
+    // this.estado.setVisible(false);
+    // this.prec4km.setParams('TIME : 2018-01-01 ');
+
+    // this.map.addLayer(this.osm);
+    // this.map.removeLayer(this.Watercolor);
+    // this.map.removeLayer(this.Toner);
 
     // var group = this.map.getLayerGroup();
     // var layers = group.getLayers();
     // var element = layers.item(0);
     // var name = element.get('title');
-    // console.log(name);
+    // console.log(layers.length);
 
 
+
+    // var layers = this.map.getLayers().getArray();
+    // var baseLayers = new Array();
+    // for (var i = 0; i < layers.length; i++) {
+    //   var lyrprop = layers[i].getProperties();
+    //   baseLayers.push(layers[i]);
+    //   console.log(layers[i]);
+    //   // if (lyrprop.type == 'Watercolor') {
+    //   //   baseLayers.push(layers[i]);
+    //   //   console.log(layers[i]);
+    //   // }
+    // }
+
+    var group = this.map.getLayerGroup();
+    var gruplayers = group.getLayers();
     var layers = this.map.getLayers().getArray();
-    var baseLayers = new Array();
-    for (var i = 0; i < layers.length; i++) {
-      var lyrprop = layers[i].getProperties();
-      console.log(lyrprop);
-      if (lyrprop.type == 'Watercolor') {
-        baseLayers.push(layers[i]);
-        console.log(layers[i]);
-      }
+    for (var i = 4; i < layers.length; i++) {
+      var element = gruplayers.item(i);
+      // this.map.removeLayer(element);
+      var name = element.get('title');
+      // console.log(element);
+      console.log(name);
     }
 
-    // console.log(this.val2);
-    if (this.busca == null) {
-      console.log("nulo");
-    } else {
-      console.log(this.busca);
-    }
+
+    // if (this.busca == null) {
+    //   console.log("nulo");
+    // } else {
+    //   console.log(this.busca);
+    // }
   }
 
   private activeLayer() {
-    this.prec4km.setVisible(true);
+    this.prec4km.setVisible(false);
+    this.estado.setVisible(false);
   }
 
 }
