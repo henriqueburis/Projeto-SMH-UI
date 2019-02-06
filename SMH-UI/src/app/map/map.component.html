@@ -9,19 +9,21 @@
 
 {{busca}}
 
-
 <div id="menu" class="ui-g" (click)="setMapType()" style="width:250px;margin-bottom:10px">
     <div class="ui-g-12">
         <p-radioButton name="Watercolor" value="osm" label="OSM" [(ngModel)]="setMap" inputId="preopt1"></p-radioButton>
     </div>
     <div class="ui-g-12">
-        <p-radioButton name="Watercolor" value="Watercolor" label="Watercolor" [(ngModel)]="setMap" inputId="preopt2"></p-radioButton>
+        <p-radioButton name="Watercolor" value="GEBCO" label="GEBCO" [(ngModel)]="setMap" inputId="preopt2"></p-radioButton>
     </div>
     <div class="ui-g-12">
-        <p-radioButton name="Watercolor" value="Toner" label="Toner" [(ngModel)]="setMap" inputId="preopt3"></p-radioButton>
+        <p-radioButton name="Watercolor" value="Watercolor" label="Watercolor" [(ngModel)]="setMap" inputId="preopt3"></p-radioButton>
     </div>
     <div class="ui-g-12">
-        <p-radioButton name="Watercolor" value="Terrain" label="Terrain" [(ngModel)]="setMap" inputId="preopt3"></p-radioButton>
+        <p-radioButton name="Watercolor" value="Toner" label="Toner" [(ngModel)]="setMap" inputId="preopt4"></p-radioButton>
+    </div>
+    <div class="ui-g-12">
+        <p-radioButton name="Watercolor" value="Terrain" label="Terrain" [(ngModel)]="setMap" inputId="preopt5"></p-radioButton>
     </div>
 </div>
 Selected Value = {{setMap||'none'}}
@@ -33,6 +35,7 @@ Selected Value = {{setMap||'none'}}
     <div class="ui-g-12"><p-checkbox name="group2" value="estado" label="Estados" [(ngModel)]="selectedCategories" inputId="Estados"></p-checkbox></div>
 </div> -->
 <button type="submit" (click)="activeLayer()">active</button>
+<button type="submit" (click)="dellLayer()">Remover Layer</button>
 
 <!-- <ul id="menu" onchange="testedd()">
     <li data-type="OSM">OSM</li>

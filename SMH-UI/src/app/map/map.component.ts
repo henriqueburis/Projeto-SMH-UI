@@ -7,12 +7,10 @@ import TileWMS from 'ol/source/TileWMS';
 import Vector from 'ol/source/Vector';
 import Stamen from 'ol/source/Stamen';
 import GeoJSON from 'ol/format/GeoJSON';
-
 import FullScreen from 'ol/control/FullScreen';
 import DragRotateAndZoom from 'ol/interaction/DragRotateAndZoom';
 import Feature from 'ol/Feature';
 import Point from 'ol/geom/Point';
-
 import Select from 'ol/interaction/Select';
 import { Icon, Style, Stroke } from 'ol/style';
 
@@ -38,20 +36,23 @@ export class MapComponent implements OnInit {
   private prec4km;
   private estado;
   private baciashidrografica;
+  private quimadalayer;
   private busca;
   private waterColor;
   private toner;
   private osm;
+  private gebco;
   private terrain;
   value: number = 0;
   testep: boolean = false;
   private features = [];
-  setMap: string = 'Watercolor';
+  setMap: string = 'GEBCO';
   // selectedCategories: string[] = ['pcd', 'estado'];
   private geoserverIBGE = 'http://www.geoservicos.ibge.gov.br/geoserver/wms?';
   private geoserverTerraMaCurso = 'http://www.terrama2.dpi.inpe.br/curso/geoserver/wms?';
   private geoserverTerraMaLocal = 'http://localhost:8080/geoserver/wms?';
   private geoserverCemaden = 'http://200.133.244.148:8080/geoserver/cemaden_dev/wms';
+  private geoserverQueimada = 'http://queimadas.dgi.inpe.br/queimadas/geoserver/wms?';
 
   constructor(private mapService: MapService) { }
 
@@ -63,18 +64,41 @@ export class MapComponent implements OnInit {
   initilizeMap() {
 
     let interval = setInterval(() => {
-      this.value = this.value + Math.floor(Math.random() * 50) + 20;
+      this.value = this.value + Math.floor(Math.random() * 10) + 1;
       if (this.value >= 100) {
         this.value = 100;
-        this.map.addLayer(this.baciashidrografica);
-        // this.testep = true;
+        this.testep = true;
         // this.messageService.add({severity: 'info', summary: 'Success', detail: 'Process Completed'});
         clearInterval(interval);
-      } else if (this.value >= 50) {
-        this.map.addLayer(this.prec4km);
-
+      } else if (this.value >= 10) {
+        // this.map.addLayer(this.pcd);
+      } else if (this.value >= 5) {
+        // this.map.addLayer(this.prec4km);
+      } else if (this.value >= 2) {
+        // this.map.addLayer(this.estado);
+        // this.map.addLayer(this.baciashidrografica);
       }
     }, 2000);
+
+
+    this.quimadalayer = new TileLayer({
+      title: 'quimada',
+      source: new TileWMS({
+        url: this.geoserverQueimada,
+        params: {
+          'LAYERS': 'bdqueimadas:focos',
+          'VERSION': '1.1.1',
+          'FORMAT': 'image/png',
+          'EPSG': '4326',
+          'TILED': true
+        },
+        preload: Infinity,
+        // opacity: 1,
+        projection: 'EPSG:4326',
+        serverType: 'geoserver',
+        name: 'layer_queimada'
+      })
+    });
 
 
     this.baciashidrografica = new TileLayer({
@@ -218,13 +242,25 @@ export class MapComponent implements OnInit {
       title: "osm",
       baseLayer: true,
       source: new OSM(),
-      layer: 'osm'
+      layer: 'osm',
+    });
+
+    this.gebco = new TileLayer({
+      source: new TileWMS(({
+        preload: Infinity,
+        visible: false,
+        title: "gebco",
+        baseLayer: true,
+        url: 'http://www.gebco.net/data_and_products/gebco_web_services/web_map_service/mapserv?',
+        params: { 'LAYERS': 'GEBCO_LATEST', 'VERSION': '1.1.1', 'FORMAT': 'image/png' }
+      })),
+      serverType: 'mapserver'
     });
 
     this.waterColor = new TileLayer(
       {
         preload: Infinity,
-        visible: true,
+        visible: false,
         title: "Watercolor",
         baseLayer: true,
         source: new Stamen({
@@ -264,7 +300,7 @@ export class MapComponent implements OnInit {
 
     this.map = new Map({
       target: 'map',
-      layers: [this.waterColor, this.osm, this.toner, this.terrain],
+      layers: [this.osm, this.gebco, this.waterColor, this.toner, this.terrain],
       // interactions: [interaction],
       controls: [control],
       view: view
@@ -278,12 +314,14 @@ export class MapComponent implements OnInit {
     //   li.addEventListener('click', switchLayer, false);
     // });
 
-    
-    this.baciashidrografica.setOpacity(0.52);
 
-    this.prec4km.setOpacity(0.52);
+    // this.map.addLayer(this.prec4km);
+    // this.map.addLayer(this.baciashidrografica);
+    // this.baciashidrografica.setOpacity(0.52);
+    // this.prec4km.setOpacity(0.52);
     this.map.addLayer(this.estado);
-    this.map.addLayer(this.pcd);
+    // this.map.addLayer(this.pcd);
+    // this.map.addLayer(this.quimadalayer);
 
     this.map.on('singleclick', function (evt) {
       // var coordinate = evt.coordinate;
@@ -329,16 +367,19 @@ export class MapComponent implements OnInit {
   private setMapType() {
     switch (this.setMap) {
       case 'osm':
-        this.osm.setVisible(true); this.waterColor.setVisible(false); this.toner.setVisible(false); this.terrain.setVisible(false);
+        this.osm.setVisible(true); this.waterColor.setVisible(false); this.toner.setVisible(false); this.terrain.setVisible(false); this.gebco.setVisible(false);
+        break;
+      case 'GEBCO':
+        this.gebco.setVisible(true); this.osm.setVisible(false); this.waterColor.setVisible(false); this.toner.setVisible(false); this.terrain.setVisible(false);
         break;
       case 'Watercolor':
-        this.osm.setVisible(false); this.waterColor.setVisible(true); this.toner.setVisible(false); this.terrain.setVisible(false);
+        this.osm.setVisible(false); this.waterColor.setVisible(true); this.toner.setVisible(false); this.terrain.setVisible(false); this.gebco.setVisible(false);
         break;
       case 'Toner':
-        this.osm.setVisible(false); this.waterColor.setVisible(false); this.toner.setVisible(true); this.terrain.setVisible(false);
+        this.osm.setVisible(false); this.waterColor.setVisible(false); this.toner.setVisible(true); this.terrain.setVisible(false); this.gebco.setVisible(false);
         break;
       case 'Terrain':
-        this.osm.setVisible(false); this.waterColor.setVisible(false); this.toner.setVisible(false); this.terrain.setVisible(true);
+        this.osm.setVisible(false); this.waterColor.setVisible(false); this.toner.setVisible(false); this.terrain.setVisible(true); this.gebco.setVisible(false);
         break;
     }
   }
@@ -352,8 +393,7 @@ export class MapComponent implements OnInit {
     // this.prec4km.setParams('TIME : 2018-01-01 ');
 
     // this.map.addLayer(this.osm);
-    // this.map.removeLayer(this.Watercolor);
-    // this.map.removeLayer(this.Toner);
+
 
     // var group = this.map.getLayerGroup();
     // var layers = group.getLayers();
@@ -378,7 +418,7 @@ export class MapComponent implements OnInit {
     var group = this.map.getLayerGroup();
     var gruplayers = group.getLayers();
     var layers = this.map.getLayers().getArray();
-    for (var i = 4; i < layers.length; i++) {
+    for (var i = 5; i < layers.length; i++) {
       var element = gruplayers.item(i);
       // this.map.removeLayer(element);
       var name = element.get('title');
@@ -396,7 +436,12 @@ export class MapComponent implements OnInit {
 
   private activeLayer() {
     this.prec4km.setVisible(false);
-    this.estado.setVisible(false);
+    this.baciashidrografica.setVisible(false);
+  }
+
+  dellLayer() {
+    this.map.removeLayer(this.prec4km);
+    this.map.removeLayer(this.baciashidrografica);
   }
 
 }
