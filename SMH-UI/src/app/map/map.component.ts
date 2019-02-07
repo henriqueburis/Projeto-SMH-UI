@@ -315,12 +315,12 @@ export class MapComponent implements OnInit {
     // });
 
 
-    // this.map.addLayer(this.prec4km);
-    // this.map.addLayer(this.baciashidrografica);
-    // this.baciashidrografica.setOpacity(0.52);
-    // this.prec4km.setOpacity(0.52);
+    this.map.addLayer(this.prec4km);
+    this.map.addLayer(this.baciashidrografica);
+    this.baciashidrografica.setOpacity(0.52);
+    this.prec4km.setOpacity(0.52);
     this.map.addLayer(this.estado);
-    // this.map.addLayer(this.pcd);
+    this.map.addLayer(this.pcd);
     // this.map.addLayer(this.quimadalayer);
 
     this.map.on('singleclick', function (evt) {
