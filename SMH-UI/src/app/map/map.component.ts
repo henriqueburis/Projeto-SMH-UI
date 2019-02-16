@@ -44,9 +44,11 @@ export class MapComponent implements OnInit {
   private gebco;
   private terrain;
   value: number = 0;
+  val1: number = 100;
   testep: boolean = false;
   private features = [];
   setMap: string = 'GEBCO';
+  checked1: boolean = true;
   // selectedCategories: string[] = ['pcd', 'estado'];
   private geoserverIBGE = 'http://www.geoservicos.ibge.gov.br/geoserver/wms?';
   private geoserverTerraMaCurso = 'http://www.terrama2.dpi.inpe.br/curso/geoserver/wms?';
@@ -315,12 +317,12 @@ export class MapComponent implements OnInit {
     // });
 
 
-    this.map.addLayer(this.prec4km);
+    // this.map.addLayer(this.prec4km);
     this.map.addLayer(this.baciashidrografica);
-    this.baciashidrografica.setOpacity(0.52);
-    this.prec4km.setOpacity(0.52);
+    // this.baciashidrografica.setOpacity(0.52);
+    // this.prec4km.setOpacity(0.52);
     this.map.addLayer(this.estado);
-    this.map.addLayer(this.pcd);
+    // this.map.addLayer(this.pcd);
     // this.map.addLayer(this.quimadalayer);
 
     this.map.on('singleclick', function (evt) {
@@ -356,12 +358,14 @@ export class MapComponent implements OnInit {
     // for (var i = 1; i <= 2; i++) {
 
     //   console.log(i);
-
+    // console.log(this.selectedCategories);
     // }
   }
 
   private setLayerType() {
-    // console.log(this.selectedCategories);
+    console.log(this.val1/100);
+    this.baciashidrografica.setVisible(this.checked1);
+    this.baciashidrografica.setOpacity(this.val1/100);
   }
 
   private setMapType() {

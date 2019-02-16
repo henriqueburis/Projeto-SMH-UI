@@ -14,6 +14,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { CheckboxModule } from 'primeng/checkbox';
 import {ProgressBarModule} from 'primeng/progressbar';
+import {InputSwitchModule} from 'primeng/inputswitch';
+import {SliderModule} from 'primeng/slider';
 
 @NgModule({
   declarations: [
@@ -27,7 +29,9 @@ import {ProgressBarModule} from 'primeng/progressbar';
     BrowserAnimationsModule,
     RadioButtonModule,
     CheckboxModule,
-    ProgressBarModule
+    ProgressBarModule,
+    InputSwitchModule,
+    SliderModule
   ],
   providers: [],
   bootstrap: [AppComponent]
