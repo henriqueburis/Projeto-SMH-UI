@@ -33,10 +33,10 @@ export class MapComponent implements OnInit {
 
   private map;
   private pcd;
-  private prec4km;
-  private estado;
-  private baciashidrografica;
-  private quimadalayer;
+  private merge4km;
+  private estadosIBGE;
+  private PrecMedia_Bacias_N1;
+  private municipioIbge;
   private busca;
   private waterColor;
   private toner;
@@ -50,11 +50,11 @@ export class MapComponent implements OnInit {
   setMap: string = 'GEBCO';
   checked1: boolean = true;
   // selectedCategories: string[] = ['pcd', 'estado'];
-  private geoserverIBGE = 'http://www.geoservicos.ibge.gov.br/geoserver/wms?';
-  private geoserverTerraMaCurso = 'http://www.terrama2.dpi.inpe.br/curso/geoserver/wms?';
+  // private geoserverIBGE = 'http://www.geoservicos.ibge.gov.br/geoserver/wms?';
+  private geoserverTerraMaCurso = 'http://www.terrama2.dpi.inpe.br/chuva/geoserver/wms?';
   private geoserverTerraMaLocal = 'http://localhost:8080/geoserver/wms?';
-  private geoserverCemaden = 'http://200.133.244.148:8080/geoserver/cemaden_dev/wms';
-  private geoserverQueimada = 'http://queimadas.dgi.inpe.br/queimadas/geoserver/wms?';
+  // private geoserverCemaden = 'http://200.133.244.148:8080/geoserver/cemaden_dev/wms';
+  // private geoserverQueimada = 'http://queimadas.dgi.inpe.br/queimadas/geoserver/wms?';
 
   constructor(private mapService: MapService) { }
 
@@ -83,62 +83,62 @@ export class MapComponent implements OnInit {
     }, 2000);
 
 
-    this.quimadalayer = new TileLayer({
-      title: 'quimada',
-      source: new TileWMS({
-        url: this.geoserverQueimada,
-        params: {
-          'LAYERS': 'bdqueimadas:focos',
-          'VERSION': '1.1.1',
-          'FORMAT': 'image/png',
-          'EPSG': '4326',
-          'TILED': true
-        },
-        preload: Infinity,
-        // opacity: 1,
-        projection: 'EPSG:4326',
-        serverType: 'geoserver',
-        name: 'layer_queimada'
-      })
-    });
-
-
-    this.baciashidrografica = new TileLayer({
-      title: 'baciashidrografica',
-      source: new TileWMS({
-        url: this.geoserverIBGE,
-        params: {
-          'LAYERS': 'CGEO:ANMS2010_06_baciashidrograficas',
-          'VERSION': '1.1.1',
-          'FORMAT': 'image/png',
-          'EPSG': '4326',
-          'TILED': true
-        },
-        preload: Infinity,
-        // opacity: 1,
-        projection: 'EPSG:4326',
-        serverType: 'geoserver',
-        name: 'layer_baciashidrografica'
-      })
-    });
-
-
-    this.prec4km = new TileLayer({
-      title: 'prec4km',
+    this.municipioIbge = new TileLayer({
+      title: 'municipioIbge',
       source: new TileWMS({
         url: this.geoserverTerraMaCurso,
         params: {
-          'LAYERS': 'terrama2_506:view506',
+          'LAYERS': 'terrama2_9:view9',
+          'VERSION': '1.1.1',
+          'FORMAT': 'image/png',
+          'EPSG': '4326',
+          'TILED': true
+        },
+        preload: Infinity,
+        // opacity: 1,
+        projection: 'EPSG:4326',
+        serverType: 'geoserver',
+        name: 'municipioIbge'
+      })
+    });
+
+
+    this.PrecMedia_Bacias_N1 = new TileLayer({
+      title: 'PrecMedia_Bacias_N1',
+      source: new TileWMS({
+        url: this.geoserverTerraMaCurso,
+        params: {
+          'LAYERS': 'terrama2_11:view11',
+          'VERSION': '1.1.1',
+          'FORMAT': 'image/png',
+          'EPSG': '4326',
+          'TILED': true
+        },
+        preload: Infinity,
+        // opacity: 1,
+        projection: 'EPSG:4326',
+        serverType: 'geoserver',
+        name: 'PrecMedia_Bacias_N1'
+      })
+    });
+
+
+    this.merge4km = new TileLayer({
+      title: 'merge4km',
+      source: new TileWMS({
+        url: this.geoserverTerraMaCurso,
+        params: {
+          'LAYERS': 'terrama2_3:view3',
           'VERSION': '1.1.1',
           'FORMAT': 'image/png',
           'EPSG': '4326',
           'TILED': true,
-          'TIME': '2019-01-02'
+          'TIME': '2019-01-01'
         },
         preload: Infinity,
         projection: 'EPSG:4326',
         serverType: 'geoserver',
-        name: 'layer_prec4km'
+        name: 'merge4km'
       })
     });
 
@@ -160,12 +160,12 @@ export class MapComponent implements OnInit {
       })
     });
 
-    this.estado = new TileLayer({
+    this.estadosIBGE = new TileLayer({
       title: 'estados',
       source: new TileWMS({
-        url: this.geoserverCemaden,
+        url: this.geoserverTerraMaCurso,
         params: {
-          'LAYERS': 'cemaden_dev:br_estados',
+          'LAYERS': 'terrama2_10:view10',
           'VERSION': '1.1.1',
           'FORMAT': 'image/png',
           'EPSG': '4326',
@@ -316,12 +316,11 @@ export class MapComponent implements OnInit {
     //   li.addEventListener('click', switchLayer, false);
     // });
 
-
-    // this.map.addLayer(this.prec4km);
-    this.map.addLayer(this.baciashidrografica);
-    // this.baciashidrografica.setOpacity(0.52);
-    // this.prec4km.setOpacity(0.52);
-    this.map.addLayer(this.estado);
+    this.map.addLayer(this.PrecMedia_Bacias_N1);
+    this.PrecMedia_Bacias_N1.setOpacity(0.52);
+    this.map.addLayer(this.merge4km);
+    // this.merge4km.setOpacity(0.52);
+    // this.map.addLayer(this.estadosIBGE);
     // this.map.addLayer(this.pcd);
     // this.map.addLayer(this.quimadalayer);
 
@@ -364,8 +363,8 @@ export class MapComponent implements OnInit {
 
   private setLayerType() {
     console.log(this.val1/100);
-    this.baciashidrografica.setVisible(this.checked1);
-    this.baciashidrografica.setOpacity(this.val1/100);
+    this.merge4km.setVisible(this.checked1);
+    this.merge4km.setOpacity(this.val1/100);
   }
 
   private setMapType() {
@@ -429,7 +428,7 @@ export class MapComponent implements OnInit {
       // console.log(element);
       console.log(name);
     }
-
+    this.merge4km.getSource().updateParams({'TIME': '2019-01-05'});
 
     // if (this.busca == null) {
     //   console.log("nulo");
@@ -439,13 +438,13 @@ export class MapComponent implements OnInit {
   }
 
   private activeLayer() {
-    this.prec4km.setVisible(false);
-    this.baciashidrografica.setVisible(false);
+    // this.prec4km.setVisible(false);
+    this.PrecMedia_Bacias_N1.setVisible(false);
   }
 
   dellLayer() {
-    this.map.removeLayer(this.prec4km);
-    this.map.removeLayer(this.baciashidrografica);
+    this.map.removeLayer(this.merge4km);
+    this.map.removeLayer(this.PrecMedia_Bacias_N1);
   }
 
 }
