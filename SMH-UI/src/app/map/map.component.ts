@@ -112,7 +112,8 @@ export class MapComponent implements OnInit {
           'VERSION': '1.1.1',
           'FORMAT': 'image/png',
           'EPSG': '4326',
-          'TILED': true
+          'TILED': true,
+          'TIME': '1998-03-18'
         },
         preload: Infinity,
         // opacity: 1,
@@ -300,9 +301,11 @@ export class MapComponent implements OnInit {
       zoom: 4
     });
 
+    var layers = [this.osm, this.gebco, this.waterColor, this.toner, this.terrain];
+
     this.map = new Map({
       target: 'map',
-      layers: [this.osm, this.gebco, this.waterColor, this.toner, this.terrain],
+      layers: layers,
       // interactions: [interaction],
       controls: [control],
       view: view
@@ -330,6 +333,7 @@ export class MapComponent implements OnInit {
       // var pixel = map.getPixelFromCoordinate(coordinate);
       // var el = document.getElementById('name');
       console.log(evt.pixel);
+
     });
 
     function changeMap() {
@@ -362,9 +366,9 @@ export class MapComponent implements OnInit {
   }
 
   private setLayerType() {
-    console.log(this.val1/100);
+    console.log(this.val1 / 100);
     this.merge4km.setVisible(this.checked1);
-    this.merge4km.setOpacity(this.val1/100);
+    this.merge4km.setOpacity(this.val1 / 100);
   }
 
   private setMapType() {
@@ -428,7 +432,8 @@ export class MapComponent implements OnInit {
       // console.log(element);
       console.log(name);
     }
-    this.merge4km.getSource().updateParams({'TIME': '2019-01-05'});
+    this.merge4km.getSource().updateParams({ 'TIME': '2019-01-05' });
+    console.log(new Date(Math.round(Date.now() / 3600000) * 3600000 - 3600000 * 3));
 
     // if (this.busca == null) {
     //   console.log("nulo");
