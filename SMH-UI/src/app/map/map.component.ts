@@ -49,6 +49,7 @@ export class MapComponent implements OnInit {
   private features = [];
   setMap: string = 'GEBCO';
   checked1: boolean = true;
+  private data;
   // selectedCategories: string[] = ['pcd', 'estado'];
   // private geoserverIBGE = 'http://www.geoservicos.ibge.gov.br/geoserver/wms?';
   private geoserverTerraMaCurso = 'http://www.terrama2.dpi.inpe.br/chuva/geoserver/wms?';
@@ -59,8 +60,24 @@ export class MapComponent implements OnInit {
   constructor(private mapService: MapService) { }
 
   ngOnInit() {
+    this.initData();
     this.initilizeMap();
     this.initilizeJson();
+    
+  }
+
+
+  initData() {
+
+    var dataNow = new Date(Math.round(Date.now() / 3600000) * 3600000 - 3600000 * 3);
+    var dia = dataNow.getDate();
+    var mes = dataNow.getMonth();
+    var ano = dataNow.getFullYear();
+
+    this.data = ano + '-' + mes + '-' + dia
+    console.log(this.data);
+
+
   }
 
   initilizeMap() {
@@ -134,7 +151,7 @@ export class MapComponent implements OnInit {
           'FORMAT': 'image/png',
           'EPSG': '4326',
           'TILED': true,
-          'TIME': '2019-01-01'
+          'TIME': this.data
         },
         preload: Infinity,
         projection: 'EPSG:4326',
@@ -433,8 +450,6 @@ export class MapComponent implements OnInit {
       console.log(name);
     }
     this.merge4km.getSource().updateParams({ 'TIME': '2019-01-05' });
-    console.log(new Date(Math.round(Date.now() / 3600000) * 3600000 - 3600000 * 3));
-
     // if (this.busca == null) {
     //   console.log("nulo");
     // } else {

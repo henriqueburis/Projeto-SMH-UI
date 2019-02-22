@@ -16,6 +16,7 @@ import { CheckboxModule } from 'primeng/checkbox';
 import {ProgressBarModule} from 'primeng/progressbar';
 import {InputSwitchModule} from 'primeng/inputswitch';
 import {SliderModule} from 'primeng/slider';
+import {ButtonModule} from 'primeng/button';
 
 @NgModule({
   declarations: [
@@ -31,7 +32,8 @@ import {SliderModule} from 'primeng/slider';
     CheckboxModule,
     ProgressBarModule,
     InputSwitchModule,
-    SliderModule
+    SliderModule,
+    ButtonModule
   ],
   providers: [],
   bootstrap: [AppComponent]
