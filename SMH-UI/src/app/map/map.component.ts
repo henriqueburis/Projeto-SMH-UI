@@ -74,7 +74,7 @@ export class MapComponent implements OnInit {
   ];
 
 
-  constructor(private mapService: MapService) { }
+  constructor(private mapService: MapService, private wmsService : WmsService) { }
 
   ngOnInit() {
     this.initDadosGrafico();
@@ -419,23 +419,7 @@ export class MapComponent implements OnInit {
     // console.log(this.features[0]);
 
     this.modelLayer.forEach(element => {
-
-      this.features[element.name] = new TileLayer({
-        title: element.name,
-        source: new TileWMS({
-          url: element.url,
-          params: {
-            'LAYERS': element.paramsLayer,
-            'VERSION': '1.1.1',
-            'FORMAT': 'image/png',
-            'EPSG': element.paramsEPSG,
-            'TILED': true
-          },
-          projection: element.paramsEPSG,
-          serverType: 'geoserver',
-          name: element.name
-        })
-      });
+      this.features[element.name] = this.wmsService.camadas(element);
       this.map.addLayer(this.features[element.name]);
     });
 
@@ -463,7 +447,7 @@ export class MapComponent implements OnInit {
     console.log(check);
     // this.merge4km.setVisible(this.checked1);
     // this.merge4km.setOpacity(this.val1 / 100);
-    this.features[featuresLayer].setVisible(false);
+    // this.features[featuresLayer].setVisible(false);
   }
 
   private setMapType() {
@@ -538,7 +522,7 @@ export class MapComponent implements OnInit {
   private activeLayer() {
     // this.prec4km.setVisible(false);
     // console.log(teste);
-    this.features["PrecMedia_Bacias_N1"].getSource().updateParams({ 'TIME': '1998-03-18' });
+    // this.features["PrecMedia_Bacias_N1"].getSource().updateParams({ 'TIME': '1998-03-18' });
     // this.features["estadoIbge"].setVisible(false);
   }
 
