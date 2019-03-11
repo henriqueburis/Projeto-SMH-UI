@@ -472,7 +472,7 @@ export class MapComponent implements OnInit {
     console.log(check);
     // this.merge4km.setVisible(this.checked1);
     // this.merge4km.setOpacity(this.val1 / 100);
-    // this.features[featuresLayer].setVisible(false);
+    this.features[featuresLayer].setVisible(false);
   }
 
   private setMapType() {
