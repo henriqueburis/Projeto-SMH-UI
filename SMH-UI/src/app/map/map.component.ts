@@ -13,6 +13,8 @@ import Feature from 'ol/Feature';
 import Point from 'ol/geom/Point';
 import Select from 'ol/interaction/Select';
 import { Icon, Style, Stroke } from 'ol/style';
+import { mapToMapExpression } from '@angular/compiler/src/render3/util';
+
 
 // import VectorSource from 'ol/source';
 // import Overlay from 'ol/Overlay';
@@ -20,9 +22,12 @@ import { Icon, Style, Stroke } from 'ol/style';
 // import Feature from 'ol/Feature';
 // import VectorLayer from 'ol/layer';
 
-
+// service
 import { MapService } from 'src/app/map.service';
-import { mapToMapExpression } from '@angular/compiler/src/render3/util';
+import { WmsService } from 'src/app/wms.service';
+
+// Model Entity
+import { Layers } from 'src/app/layers';
 
 @Component({
   selector: 'app-map',
@@ -32,24 +37,27 @@ import { mapToMapExpression } from '@angular/compiler/src/render3/util';
 export class MapComponent implements OnInit {
 
   private map;
-  private pcd;
+  // private pcd;
   private merge4km;
-  private estadosIBGE;
+  // private estadosIBGE;
   private PrecMedia_Bacias_N1;
   private municipioIbge;
-  private busca;
+  // private busca;
   private waterColor;
   private toner;
   private osm;
   private gebco;
   private terrain;
+
+  private layerAdd
   value: number = 0;
   val1: number = 100;
   testep: boolean = false;
   private features = [];
   setMap: string = 'GEBCO';
-  checked1: boolean = true;
+  // checked1: boolean = true;
   private data;
+  private dataGrafico: any;
   // selectedCategories: string[] = ['pcd', 'estado'];
   // private geoserverIBGE = 'http://www.geoservicos.ibge.gov.br/geoserver/wms?';
   private geoserverTerraMaCurso = 'http://www.terrama2.dpi.inpe.br/chuva/geoserver/wms?';
@@ -57,13 +65,46 @@ export class MapComponent implements OnInit {
   // private geoserverCemaden = 'http://200.133.244.148:8080/geoserver/cemaden_dev/wms';
   // private geoserverQueimada = 'http://queimadas.dgi.inpe.br/queimadas/geoserver/wms?';
 
+  private modelLayer = [
+    new Layers(1, 'municipioIbge', 'TerraMA2', this.geoserverTerraMaCurso, 'terrama2_9:view9', '4326'),
+    new Layers(2, 'PrecMedia_Bacias_N1', 'TerraMA2', this.geoserverTerraMaCurso, 'terrama2_11:view11', '4326'),
+    new Layers(3, 'merge4km', 'TerraMA2', this.geoserverTerraMaCurso, 'terrama2_3:view3', '4326'),
+    new Layers(4, 'pcd', 'TerraMA2', this.geoserverTerraMaLocal, 'terrama2_1:view1', '4326'),
+    new Layers(5, 'estadoIbge', 'TerraMA2', this.geoserverTerraMaCurso, 'terrama2_10:view10', '4326')
+  ];
+
+
   constructor(private mapService: MapService) { }
 
   ngOnInit() {
+    this.initDadosGrafico();
     this.initData();
     this.initilizeMap();
     this.initilizeJson();
-    
+  }
+
+  initDadosGrafico() {
+
+    // Dado Do Grafico Prime NG
+    this.dataGrafico = {
+      labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+      datasets: [
+        {
+          label: 'My First dataset',
+          backgroundColor: '#42A5F5',
+          borderColor: '#1E88E5',
+          data: [65, 59, 80, 81, 56, 55, 40]
+        },
+        {
+          label: 'My Second dataset',
+          backgroundColor: '#9CCC65',
+          borderColor: '#7CB342',
+          data: [28, 48, 40, 19, 86, 27, 90]
+        }
+      ]
+    }
+
+
   }
 
 
@@ -100,101 +141,101 @@ export class MapComponent implements OnInit {
     }, 2000);
 
 
-    this.municipioIbge = new TileLayer({
-      title: 'municipioIbge',
-      source: new TileWMS({
-        url: this.geoserverTerraMaCurso,
-        params: {
-          'LAYERS': 'terrama2_9:view9',
-          'VERSION': '1.1.1',
-          'FORMAT': 'image/png',
-          'EPSG': '4326',
-          'TILED': true
-        },
-        preload: Infinity,
-        // opacity: 1,
-        projection: 'EPSG:4326',
-        serverType: 'geoserver',
-        name: 'municipioIbge'
-      })
-    });
+    // this.municipioIbge = new TileLayer({
+    //   title: 'municipioIbge',
+    //   source: new TileWMS({
+    //     url: this.geoserverTerraMaCurso,
+    //     params: {
+    //       'LAYERS': 'terrama2_9:view9',
+    //       'VERSION': '1.1.1',
+    //       'FORMAT': 'image/png',
+    //       'EPSG': '4326',
+    //       'TILED': true
+    //     },
+    //     preload: Infinity,
+    //     // opacity: 1,
+    //     projection: 'EPSG:4326',
+    //     serverType: 'geoserver',
+    //     name: 'municipioIbge'
+    //   })
+    // });
 
 
-    this.PrecMedia_Bacias_N1 = new TileLayer({
-      title: 'PrecMedia_Bacias_N1',
-      source: new TileWMS({
-        url: this.geoserverTerraMaCurso,
-        params: {
-          'LAYERS': 'terrama2_11:view11',
-          'VERSION': '1.1.1',
-          'FORMAT': 'image/png',
-          'EPSG': '4326',
-          'TILED': true,
-          'TIME': '1998-03-18'
-        },
-        preload: Infinity,
-        // opacity: 1,
-        projection: 'EPSG:4326',
-        serverType: 'geoserver',
-        name: 'PrecMedia_Bacias_N1'
-      })
-    });
+    // this.PrecMedia_Bacias_N1 = new TileLayer({
+    //   title: 'PrecMedia_Bacias_N1',
+    //   source: new TileWMS({
+    //     url: this.geoserverTerraMaCurso,
+    //     params: {
+    //       'LAYERS': 'terrama2_11:view11',
+    //       'VERSION': '1.1.1',
+    //       'FORMAT': 'image/png',
+    //       'EPSG': '4326',
+    //       'TILED': true,
+    //       'TIME': '1998-03-18'
+    //     },
+    //     preload: Infinity,
+    //     // opacity: 1,
+    //     projection: 'EPSG:4326',
+    //     serverType: 'geoserver',
+    //     name: 'PrecMedia_Bacias_N1'
+    //   })
+    // });
 
 
-    this.merge4km = new TileLayer({
-      title: 'merge4km',
-      source: new TileWMS({
-        url: this.geoserverTerraMaCurso,
-        params: {
-          'LAYERS': 'terrama2_3:view3',
-          'VERSION': '1.1.1',
-          'FORMAT': 'image/png',
-          'EPSG': '4326',
-          'TILED': true,
-          'TIME': this.data
-        },
-        preload: Infinity,
-        projection: 'EPSG:4326',
-        serverType: 'geoserver',
-        name: 'merge4km'
-      })
-    });
+    // this.merge4km = new TileLayer({
+    //   title: 'merge4km',
+    //   source: new TileWMS({
+    //     url: this.geoserverTerraMaCurso,
+    //     params: {
+    //       'LAYERS': 'terrama2_3:view3',
+    //       'VERSION': '1.1.1',
+    //       'FORMAT': 'image/png',
+    //       'EPSG': '4326',
+    //       'TILED': true,
+    //       'TIME': this.data
+    //     },
+    //     preload: Infinity,
+    //     projection: 'EPSG:4326',
+    //     serverType: 'geoserver',
+    //     name: 'merge4km'
+    //   })
+    // });
 
-    this.pcd = new TileLayer({
-      title: 'pcd',
-      source: new TileWMS({
-        url: this.geoserverTerraMaLocal,
-        params: {
-          'LAYERS': 'terrama2_1:view1',
-          'VERSION': '1.1.1',
-          'FORMAT': 'image/png',
-          'EPSG': '4326',
-          'TILED': true
-        },
-        preload: Infinity,
-        projection: 'EPSG:4326',
-        serverType: 'geoserver',
-        name: 'layer_pcd'
-      })
-    });
+    // this.pcd = new TileLayer({
+    //   title: 'pcd',
+    //   source: new TileWMS({
+    //     url: this.geoserverTerraMaLocal,
+    //     params: {
+    //       'LAYERS': 'terrama2_1:view1',
+    //       'VERSION': '1.1.1',
+    //       'FORMAT': 'image/png',
+    //       'EPSG': '4326',
+    //       'TILED': true
+    //     },
+    //     preload: Infinity,
+    //     projection: 'EPSG:4326',
+    //     serverType: 'geoserver',
+    //     name: 'layer_pcd'
+    //   })
+    // });
 
-    this.estadosIBGE = new TileLayer({
-      title: 'estados',
-      source: new TileWMS({
-        url: this.geoserverTerraMaCurso,
-        params: {
-          'LAYERS': 'terrama2_10:view10',
-          'VERSION': '1.1.1',
-          'FORMAT': 'image/png',
-          'EPSG': '4326',
-          'TILED': true
-        },
-        preload: Infinity,
-        projection: 'EPSG:4326',
-        serverType: 'geoserver',
-        name: 'layer_estado'
-      })
-    });
+    // this.estadosIBGE = new TileLayer({
+    //   title: 'estados',
+    //   source: new TileWMS({
+    //     url: this.geoserverTerraMaCurso,
+    //     params: {
+    //       'LAYERS': 'terrama2_10:view10',
+    //       'VERSION': '1.1.1',
+    //       'FORMAT': 'image/png',
+    //       'EPSG': '4326',
+    //       'TILED': true
+    //     },
+    //     preload: Infinity,
+    //     projection: 'EPSG:4326',
+    //     serverType: 'geoserver',
+    //     name: 'layer_estado'
+    //   })
+    // });
 
     //-------------------grup test---------------------------//
     // var teste = new Vector({
@@ -336,9 +377,9 @@ export class MapComponent implements OnInit {
     //   li.addEventListener('click', switchLayer, false);
     // });
 
-    this.map.addLayer(this.PrecMedia_Bacias_N1);
-    this.PrecMedia_Bacias_N1.setOpacity(0.52);
-    this.map.addLayer(this.merge4km);
+    // this.map.addLayer(this.PrecMedia_Bacias_N1);
+    // this.PrecMedia_Bacias_N1.setOpacity(0.52);
+    // this.map.addLayer(this.merge4km);
     // this.merge4km.setOpacity(0.52);
     // this.map.addLayer(this.estadosIBGE);
     // this.map.addLayer(this.pcd);
@@ -352,6 +393,8 @@ export class MapComponent implements OnInit {
       console.log(evt.pixel);
 
     });
+
+
 
     function changeMap() {
       console.log('name');
@@ -375,6 +418,27 @@ export class MapComponent implements OnInit {
 
     // console.log(this.features[0]);
 
+    this.modelLayer.forEach(element => {
+
+      this.features[element.name] = new TileLayer({
+        title: element.name,
+        source: new TileWMS({
+          url: element.url,
+          params: {
+            'LAYERS': element.paramsLayer,
+            'VERSION': '1.1.1',
+            'FORMAT': 'image/png',
+            'EPSG': element.paramsEPSG,
+            'TILED': true
+          },
+          projection: element.paramsEPSG,
+          serverType: 'geoserver',
+          name: element.name
+        })
+      });
+      this.map.addLayer(this.features[element.name]);
+    });
+
     // for (var i = 1; i <= 2; i++) {
 
     //   console.log(i);
@@ -382,10 +446,24 @@ export class MapComponent implements OnInit {
     // }
   }
 
-  private setLayerType() {
+  private legenda(featuresLayer, featuresGeoserver) {
+    var url = featuresGeoserver + "REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&legend_options=forceLabels:on&LAYER={{LAYER_NAME}}&STYLE={{STYLE_NAME}}";
+    url = url.replace('{{LAYER_NAME}}', featuresLayer);
+    url = url.replace('{{STYLE_NAME}}', featuresLayer + '_style');
+    if (url) {
+      var parser = new GeoJSON();
+      document.getElementById('info').innerHTML =
+        '<iframe allowfullscreen height="800" src="' + url + '"></iframe>';
+    }
+  }
+
+  private setLayerType(featuresLayer, check) {
     console.log(this.val1 / 100);
-    this.merge4km.setVisible(this.checked1);
-    this.merge4km.setOpacity(this.val1 / 100);
+    console.log(featuresLayer);
+    console.log(check);
+    // this.merge4km.setVisible(this.checked1);
+    // this.merge4km.setOpacity(this.val1 / 100);
+    this.features[featuresLayer].setVisible(false);
   }
 
   private setMapType() {
@@ -449,7 +527,7 @@ export class MapComponent implements OnInit {
       // console.log(element);
       console.log(name);
     }
-    this.merge4km.getSource().updateParams({ 'TIME': '2019-01-05' });
+    // this.merge4km.getSource().updateParams({ 'TIME': '2019-01-05' });
     // if (this.busca == null) {
     //   console.log("nulo");
     // } else {
@@ -459,7 +537,9 @@ export class MapComponent implements OnInit {
 
   private activeLayer() {
     // this.prec4km.setVisible(false);
-    this.PrecMedia_Bacias_N1.setVisible(false);
+    // console.log(teste);
+    this.features["PrecMedia_Bacias_N1"].getSource().updateParams({ 'TIME': '1998-03-18' });
+    // this.features["estadoIbge"].setVisible(false);
   }
 
   dellLayer() {

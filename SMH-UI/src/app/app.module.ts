@@ -17,6 +17,13 @@ import {ProgressBarModule} from 'primeng/progressbar';
 import {InputSwitchModule} from 'primeng/inputswitch';
 import {SliderModule} from 'primeng/slider';
 import {ButtonModule} from 'primeng/button';
+import {DialogModule} from 'primeng/dialog';
+import {SidebarModule} from 'primeng/sidebar';
+import {ChartModule} from 'primeng/chart';
+import {CalendarModule} from 'primeng/calendar';
+import {InputTextModule} from 'primeng/inputtext';
+import {ProgressSpinnerModule} from 'primeng/progressspinner';
+
 
 @NgModule({
   declarations: [
@@ -33,7 +40,13 @@ import {ButtonModule} from 'primeng/button';
     ProgressBarModule,
     InputSwitchModule,
     SliderModule,
-    ButtonModule
+    ButtonModule,
+    DialogModule,
+    SidebarModule,
+    ChartModule,
+    CalendarModule,
+    InputTextModule,
+    ProgressSpinnerModule
   ],
   providers: [],
   bootstrap: [AppComponent]
