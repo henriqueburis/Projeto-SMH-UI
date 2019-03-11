@@ -66,11 +66,11 @@ export class MapComponent implements OnInit {
   // private geoserverQueimada = 'http://queimadas.dgi.inpe.br/queimadas/geoserver/wms?';
 
   private modelLayer = [
-    new Layers(1, 'municipioIbge', 'TerraMA2', this.geoserverTerraMaCurso, 'terrama2_9:view9', '4326'),
+    new Layers(1, 'Municipio_Ibge', 'TerraMA2', this.geoserverTerraMaCurso, 'terrama2_9:view9', '4326'),
     new Layers(2, 'PrecMedia_Bacias_N1', 'TerraMA2', this.geoserverTerraMaCurso, 'terrama2_11:view11', '4326'),
-    new Layers(3, 'merge4km', 'TerraMA2', this.geoserverTerraMaCurso, 'terrama2_3:view3', '4326'),
-    new Layers(4, 'pcd', 'TerraMA2', this.geoserverTerraMaLocal, 'terrama2_1:view1', '4326'),
-    new Layers(5, 'estadoIbge', 'TerraMA2', this.geoserverTerraMaCurso, 'terrama2_10:view10', '4326')
+    new Layers(3, 'Merge4km', 'TerraMA2', this.geoserverTerraMaCurso, 'terrama2_3:view3', '4326'),
+    new Layers(4, 'PCDs', 'TerraMA2', this.geoserverTerraMaLocal, 'terrama2_1:view1', '4326'),
+    new Layers(5, 'EstadoIbge', 'TerraMA2', this.geoserverTerraMaCurso, 'terrama2_10:view10', '4326')
   ];
 
 
