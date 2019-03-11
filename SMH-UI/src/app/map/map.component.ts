@@ -69,12 +69,12 @@ export class MapComponent implements OnInit {
     new Layers(1, 'Municipio_Ibge', 'TerraMA2', this.geoserverTerraMaCurso, 'terrama2_9:view9', '4326'),
     new Layers(2, 'PrecMedia_Bacias_N1', 'TerraMA2', this.geoserverTerraMaCurso, 'terrama2_11:view11', '4326'),
     new Layers(3, 'Merge4km', 'TerraMA2', this.geoserverTerraMaCurso, 'terrama2_3:view3', '4326'),
-    new Layers(4, 'PCDs', 'TerraMA2', this.geoserverTerraMaLocal, 'terrama2_1:view1', '4326'),
-    new Layers(5, 'EstadoIbge', 'TerraMA2', this.geoserverTerraMaCurso, 'terrama2_10:view10', '4326')
+    new Layers(5, 'EstadoIbge', 'TerraMA2', this.geoserverTerraMaCurso, 'terrama2_10:view10', '4326'),
+    new Layers(4, 'PCDs', 'TerraMA2', this.geoserverTerraMaLocal, 'terrama2_1:view1', '4326')
   ];
 
 
-  constructor(private mapService: MapService, private wmsService : WmsService) { }
+  constructor(private mapService: MapService, private wmsService: WmsService) { }
 
   ngOnInit() {
     this.initDadosGrafico();
@@ -85,7 +85,7 @@ export class MapComponent implements OnInit {
 
   initDadosGrafico() {
 
-    // Dado Do Grafico Prime NG
+    // Dado Do Gráfico Prime NG
     this.dataGrafico = {
       labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
       datasets: [
@@ -395,6 +395,31 @@ export class MapComponent implements OnInit {
     });
 
 
+    var wmsSource = new TileWMS({
+      url: this.geoserverTerraMaLocal,
+      params: { 'LAYERS': 'terrama2_1:view1', 'TILED': true },
+      serverType: 'geoserver',
+      crossOrigin: 'anonymous'
+    });
+
+
+    this.map.on('singleclick', function (evt) {
+
+      var viewResolution = /** @type {number} */ (view.getResolution());
+      var viewProjection = /** @type {number} */ (view.getProjection());
+      var url = wmsSource.getGetFeatureInfoUrl(
+        evt.coordinate, viewResolution, viewProjection, 'EPSG:4326',
+        { 'INFO_FORMAT': 'text/javascript', 'propertyName': 'formal_en' });
+
+      console.log(url);
+
+      if (url) {
+        var parser = new GeoJSON();
+        document.getElementById('info').innerHTML =
+          '<iframe allowfullscreen src="' + url + '"></iframe>';
+      }
+    });
+
 
     function changeMap() {
       console.log('name');
@@ -500,6 +525,8 @@ export class MapComponent implements OnInit {
     //   //   console.log(layers[i]);
     //   // }
     // }
+
+
 
     var group = this.map.getLayerGroup();
     var gruplayers = group.getLayers();
