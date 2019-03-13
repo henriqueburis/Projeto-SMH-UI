@@ -4,7 +4,7 @@ import TileLayer from 'ol/layer/Tile';
 import TileWMS from 'ol/source/TileWMS';
 
 // Model Entity
-import { Layers } from 'src/app/layers';
+import { Layers } from 'src/app/entity/layers';
 
 @Injectable({
   providedIn: 'root'

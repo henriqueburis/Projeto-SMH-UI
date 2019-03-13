@@ -23,11 +23,11 @@ import { mapToMapExpression } from '@angular/compiler/src/render3/util';
 // import VectorLayer from 'ol/layer';
 
 // service
-import { MapService } from 'src/app/map.service';
-import { WmsService } from 'src/app/wms.service';
+import { MapService } from 'src/app/services/map.service';
+import { WmsService } from 'src/app/services/wms.service';
 
 // Model Entity
-import { Layers } from 'src/app/layers';
+import { Layers } from 'src/app/entity/layers';
 
 @Component({
   selector: 'app-map',
