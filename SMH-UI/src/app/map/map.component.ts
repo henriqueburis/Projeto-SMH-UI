@@ -466,13 +466,17 @@ export class MapComponent implements OnInit {
     }
   }
 
-  private setLayerType(featuresLayer, check) {
+  private setLayerType(featuresLayer) {
     console.log(this.val1 / 100);
     console.log(featuresLayer);
-    console.log(check);
+    if (this.features[featuresLayer].getVisible() == true) {
+      this.features[featuresLayer].setVisible(false);
+    } else {
+      this.features[featuresLayer].setVisible(true);
+    }
+    // console.log(this.features[featuresLayer].getVisible())
     // this.merge4km.setVisible(this.checked1);
     // this.merge4km.setOpacity(this.val1 / 100);
-    this.features[featuresLayer].setVisible(false);
   }
 
   private setMapType() {
@@ -546,7 +550,23 @@ export class MapComponent implements OnInit {
     // }
   }
 
-  private activeLayer() {
+  private activeLayer(featuresLayer) {
+
+    var group = this.map.getLayerGroup();
+    var gruplayers = group.getLayers();
+    var layers = this.map.getLayers().getArray();
+    for (var i = 5; i < layers.length; i++) {
+      var element = gruplayers.item(i);
+      var name = element.get('title');
+      this.features[name].setZIndex(0);
+    }
+
+    if (this.features[featuresLayer].getZIndex() == null || this.features[featuresLayer].getZIndex() == "") {
+      console.log(featuresLayer);
+      this.features[featuresLayer].setZIndex(1);
+    } else {
+      // this.features[featuresLayer].setZIndex("");
+    }
     // this.prec4km.setVisible(false);
     // console.log(teste);
     // this.features["PrecMedia_Bacias_N1"].getSource().updateParams({ 'TIME': '1998-03-18' });
