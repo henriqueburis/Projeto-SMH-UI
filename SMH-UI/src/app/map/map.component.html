@@ -37,7 +37,8 @@
                     <div class="fontecamada">Fonte da camada: {{ layer.fonte }}</div>
                 </a>
                 <div class="material-switch pull-right">
-                    <input id="{{ layer.name }}" name="someSwitchOption001" (click)="setLayerType(layer.name)"  type="checkbox" checked/>
+                    <!-- <input id="{{ layer.name }}" name="someSwitchOption001" (click)="setLayerType(layer.name)"  type="checkbox" checked/> -->
+                    <input id="{{ layer.name }}" name="someSwitchOption001" (click)="setLayerType(layer.name)"  type="checkbox"/>
                     <!-- <p-inputSwitch id="{{ layer.name }}"  (click)="setLayerType(layer.name)"></p-inputSwitch> -->
                     <label for="{{ layer.name }}" class="bg-white"></label>
                 </div>
@@ -46,7 +47,7 @@
                     <li>
                         <div class="fe-camadas">
                             <button type="button" class="btn" (click)="activeLayer(layer.name)"><i class="material-icons md-dark">swap_vert</i></button>
-                            <button type="button" class="btn" (click)="visibleSidebar2 = true" (click)="legenda(layer.paramsLayer,layer.url)"><i class="material-icons md-dark">palette</i></button>
+                            <button type="button" class="btn" (click)="LegendaSidebar = true" (click)="legenda(layer.paramsLayer,layer.url)"><i class="material-icons md-dark">palette</i></button>
                             <button type="button" class="btn"><i class="material-icons md-dark md-inactive">add_location</i></button>
                             <button type="button" class="btn"><i class="material-icons md-dark">brightness_6</i></button>
                         </div>
@@ -90,7 +91,7 @@
                             <a class="dropdown-item" href="#">Busca De Dados</a>
                             <a class="dropdown-item" href="#">Graficos</a>
                             <a class="dropdown-item" href="#">Exportar Dados</a>
-                            <a class="dropdown-item" href="#">Filtros</a>
+                            <a class="dropdown-item" (click)="filtro_sidebar = true" href="#">Filtros</a>
                         </div>
                     </li>
                     <li class="nav-item active">
@@ -238,10 +239,19 @@
 
 
 
+<p-sidebar [(visible)]="filtro_sidebar" position="right" [baseZIndex]="10000">
+    <h5 style="font-weight:normal">Filtro</h5>
+   
+    <p-dropdown [options]="cities" [(ngModel)]="selectedCity" placeholder="Select a Cidade" optionLabel="name" [showClear]="true"></p-dropdown>
+        <p>
+        <button pButton type="button"  (click)="salvar()" label="Buscar" class="ui-button-success"></button>
+        <button pButton type="button" (click)="filtro_sidebar = false" label="Fechar" class="ui-button-secondary"></button>
 
 
+</p-sidebar>
 
-<p-sidebar [(visible)]="visibleSidebar2" position="right" [baseZIndex]="10000">
+
+<p-sidebar [(visible)]="LegendaSidebar" position="right" [baseZIndex]="10000">
     <h5 style="font-weight:normal">Legenda</h5>
     <div id="info">&nbsp;</div>
 

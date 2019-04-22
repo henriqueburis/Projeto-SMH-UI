@@ -29,6 +29,10 @@ import { WmsService } from 'src/app/services/wms.service';
 // Model Entity
 import { Layers } from 'src/app/entity/layers';
 
+// Interface
+// import { City } from 'src/app/interface/city';
+import { Cidades } from 'src/app/interface/cidades';
+
 @Component({
   selector: 'app-map',
   templateUrl: './map.component.html',
@@ -48,6 +52,9 @@ export class MapComponent implements OnInit {
   private osm;
   private gebco;
   private terrain;
+
+  private cities: Cidades[];
+  private selectedCity: Cidades;
 
   private layerAdd
   value: number = 0;
@@ -81,6 +88,7 @@ export class MapComponent implements OnInit {
     this.initData();
     this.initilizeMap();
     this.initilizeJson();
+    this.initCity();
   }
 
   initDadosGrafico() {
@@ -117,6 +125,20 @@ export class MapComponent implements OnInit {
 
     this.data = ano + '-' + mes + '-' + dia
     console.log(this.data);
+
+
+  }
+
+
+  initCity(){
+
+    this.cities = [
+      {name: 'Lorena', code: '1230', lat:-45.146517200, long:-22.7309943000},
+      {name: 'Guara', code: '2142', lat:-22.792237, long:-45.2387576},
+      {name: 'SJC', code: '4582', lat:-45.9332243, long:-23.1894907},
+      {name: 'PINDA', code: '896', lat:321321, long:46546},
+      {name: 'SEILA', code: '3444', lat:321321, long:46546}
+  ];
 
 
   }
@@ -356,7 +378,8 @@ export class MapComponent implements OnInit {
     var center = [-6124801.2015823, -1780692.0106836];
     var view = new View({
       center: center,
-      zoom: 4
+      zoom: 4,
+      // projection: 'EPSG:4326'
     });
 
     var layers = [this.osm, this.gebco, this.waterColor, this.toner, this.terrain];
@@ -540,8 +563,18 @@ export class MapComponent implements OnInit {
       // this.map.removeLayer(element);
       var name = element.get('title');
       // console.log(element);
-      console.log(name);
+      // console.log(name);
     }
+
+    this.map.setView(new View({
+      // center: [-6124801.2015823, -1780692.0106836], zoom: 9
+      center: [this.selectedCity.lat, this.selectedCity.long], zoom: 11, projection: 'EPSG:4326'
+      //  center: [this.selectedCity.lat, this.selectedCity.long], zoom: 11
+
+    }));
+   
+    console.log(this.selectedCity.lat);
+
     // this.merge4km.getSource().updateParams({ 'TIME': '2019-01-05' });
     // if (this.busca == null) {
     //   console.log("nulo");

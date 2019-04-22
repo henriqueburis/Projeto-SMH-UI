@@ -33,6 +33,7 @@ export class WmsService {
         name: Layers.name
       })
     });
+    this.features.setVisible(false);
     return this.features;
   }
 
